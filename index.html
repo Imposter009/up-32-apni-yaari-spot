@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UP 32</title>
+  <meta name="description" content="UP 32 — Apni Yaari Spot. Always-on radio from a Lucknow street-corner chai stall.">
+  <meta property="og:title" content="UP 32">
+  <meta property="og:description" content="Four friends, one chai stall, endless baatein. Always-on radio from a Lucknow street corner.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#c45c26">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true">
+    <img src="assets/chai-backdrop.jpg" alt="Apni Yaari Spot — illustrated Lucknow chai stall" class="backdrop__img">
+    <div class="backdrop__overlay"></div>
+    <div class="steam steam--1"></div>
+    <div class="steam steam--2"></div>
+    <div class="steam steam--3"></div>
+  </div>
+
+  <header class="top-bar">
+    <div class="top-bar__left">
+      <span class="top-bar__brand">UP 32</span>
+      <span class="top-bar__dot">·</span>
+      <span id="lucknow-time" class="top-bar__time">--:--</span>
+      <span class="top-bar__dot">·</span>
+      <span class="top-bar__listeners"><span id="listener-count">0</span> online</span>
+    </div>
+    <nav class="top-bar__links">
+      <button id="ambient-toggle" class="ambient-toggle" aria-pressed="false" title="Street ambience">
+        🫖 <span class="ambient-toggle__label">Ambience</span>
+      </button>
+      <a href="https://open.spotify.com/playlist/37i9dQZF1DX4sWSpwq3LiO" target="_blank" rel="noopener" class="top-bar__link">Spotify</a>
+      <button id="install-btn" class="top-bar__link top-bar__link--btn" hidden>Install</button>
+    </nav>
+  </header>
+
+  <aside id="playlists" class="rotations-panel">
+    <button id="rotations-sign" class="rotations-sign" aria-expanded="false" aria-controls="playlist-grid">
+      <span class="rotations-sign__main">Rotations</span>
+      <span class="rotations-sign__sub">playlist बदलें</span>
+    </button>
+    <div id="playlist-grid" class="playlist-grid" hidden></div>
+  </aside>
+
+  <div class="bottom-dock">
+    <p class="lucknow-quote" aria-hidden="true">मुस्कुराइए, आप लखनऊ में हैं</p>
+    <section class="player-card" aria-label="Now playing">
+      <div class="player-card__meta">
+        <p class="player-card__label">Now playing · <span id="current-playlist">Chai & Baatein</span> <span id="source-badge" class="player-card__source"></span></p>
+        <h2 id="now-playing-title" class="player-card__title">—</h2>
+        <p id="now-playing-artist" class="player-card__artist"></p>
+      </div>
+      <div class="player-card__controls">
+        <button id="prev-btn" class="ctrl-btn" aria-label="Previous song">⏮</button>
+        <button id="play-btn" class="ctrl-btn ctrl-btn--play" aria-label="Play or pause">▶</button>
+        <button id="next-btn" class="ctrl-btn" aria-label="Next song">⏭</button>
+      </div>
+      <div class="player-card__progress">
+        <span id="elapsed" class="player-card__time">0:00</span>
+        <div class="progress-bar"><div id="progress-fill" class="progress-bar__fill"></div></div>
+        <span id="duration" class="player-card__time">—</span>
+      </div>
+    </section>
+  </div>
+
+  <p id="file-warning" class="file-warning" hidden>
+    Local tip: run <strong>start.cmd</strong> and open <strong>http://localhost:8080</strong>. Not needed on Vercel.
+  </p>
+
+  <footer class="footer">
+    <p>© 2026 Apni Yaari Spot · creator: Sumit Gupta</p>
+  </footer>
+
+  <audio id="local-audio" class="local-audio" preload="metadata"></audio>
+
+  <iframe
+    id="yt-embed"
+    class="yt-embed"
+    title="YouTube player"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  ></iframe>
+
+  <script src="js/playlists.js"></script>
+  <script src="js/ambient.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

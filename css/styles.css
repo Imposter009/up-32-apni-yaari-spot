@@ -1,0 +1,494 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --amber: #e8923a;
+  --amber-deep: #c45c26;
+  --cream: #faf3e8;
+  --cream-dim: rgba(250, 243, 232, 0.82);
+  --night: #1a1410;
+  --night-soft: rgba(26, 20, 16, 0.55);
+  --gold: #d4a853;
+  --font-body: "Hind", system-ui, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100dvh;
+  font-family: var(--font-body);
+  color: var(--cream);
+  background: var(--night);
+  overflow: hidden;
+}
+
+/* Backdrop — full screen, well-framed */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: var(--night);
+  overflow: hidden;
+}
+
+.backdrop__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  transform: scale(1.02);
+  transition: object-fit 0.35s ease, transform 0.35s ease;
+}
+
+.backdrop__overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, rgba(26, 20, 16, 0.35) 0%, transparent 20%, transparent 80%, rgba(26, 20, 16, 0.3) 100%),
+    linear-gradient(to bottom, rgba(26, 20, 16, 0.25) 0%, transparent 15%, transparent 65%, rgba(26, 20, 16, 0.75) 100%);
+}
+
+/* Steam */
+.steam {
+  position: absolute;
+  bottom: 38%;
+  width: 40px;
+  height: 80px;
+  background: radial-gradient(ellipse, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: rise 4s ease-in-out infinite;
+  opacity: 0;
+}
+
+.steam--1 { left: 42%; animation-delay: 0s; }
+.steam--2 { left: 48%; animation-delay: 1.2s; width: 30px; }
+.steam--3 { left: 54%; animation-delay: 2.4s; width: 35px; }
+
+@keyframes rise {
+  0% { transform: translateY(0) scale(0.6); opacity: 0; }
+  30% { opacity: 0.45; }
+  100% { transform: translateY(-60px) scale(1.2); opacity: 0; }
+}
+
+/* Top bar */
+.top-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  font-size: 0.8rem;
+  letter-spacing: 0.03em;
+  background: linear-gradient(to bottom, rgba(26, 20, 16, 0.65), transparent);
+}
+
+.top-bar__left {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--cream-dim);
+}
+
+.top-bar__brand {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.88rem;
+  letter-spacing: 0.08em;
+  color: var(--gold);
+}
+
+.top-bar__dot { opacity: 0.5; }
+.top-bar__listeners { color: var(--gold); }
+
+.top-bar__links {
+  display: flex;
+  gap: 0.65rem;
+  align-items: center;
+}
+
+.top-bar__link {
+  color: var(--cream-dim);
+  text-decoration: none;
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.top-bar__link:hover { color: var(--amber); }
+
+.ambient-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.3rem 0.55rem;
+  border-radius: 999px;
+  border: 1px solid rgba(232, 146, 58, 0.3);
+  background: rgba(26, 20, 16, 0.5);
+  color: var(--cream-dim);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.ambient-toggle:hover { border-color: var(--amber); }
+
+.ambient-toggle--on {
+  border-color: var(--amber);
+  background: rgba(196, 92, 38, 0.35);
+  color: var(--cream);
+}
+
+.ambient-toggle__label {
+  display: none;
+}
+
+@media (min-width: 480px) {
+  .ambient-toggle__label { display: inline; }
+}
+
+/* Rotations — hand-painted sign, expands on click */
+.rotations-panel {
+  position: fixed;
+  top: 3rem;
+  right: 0.75rem;
+  z-index: 3;
+  width: auto;
+  max-width: 10rem;
+}
+
+.rotations-sign {
+  display: block;
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border: 2px solid rgba(212, 168, 83, 0.5);
+  border-radius: 4px;
+  background: linear-gradient(175deg, rgba(120, 48, 18, 0.92) 0%, rgba(80, 32, 12, 0.95) 100%);
+  box-shadow: 0 3px 14px rgba(0, 0, 0, 0.45);
+  transform: rotate(1.5deg);
+  cursor: pointer;
+  text-align: center;
+  font: inherit;
+  color: inherit;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.rotations-sign:hover {
+  border-color: var(--gold);
+  transform: rotate(0deg);
+}
+
+.rotations-panel--open .rotations-sign {
+  border-color: var(--amber);
+  transform: rotate(0deg);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.rotations-sign__main {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+
+.rotations-sign__sub {
+  display: block;
+  font-size: 0.58rem;
+  color: rgba(250, 243, 232, 0.55);
+  margin-top: 0.15rem;
+}
+
+.playlist-grid {
+  display: none;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.4rem;
+  border: 2px solid rgba(212, 168, 83, 0.5);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  background: rgba(80, 32, 12, 0.94);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.rotations-panel--open .playlist-grid {
+  display: flex;
+}
+
+.playlist-chip {
+  padding: 0.35rem 0.45rem;
+  border-radius: 4px;
+  border: 1px solid rgba(212, 168, 83, 0.2);
+  background: rgba(26, 20, 16, 0.35);
+  color: var(--cream-dim);
+  font: inherit;
+  font-size: 0.65rem;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s, color 0.2s;
+  line-height: 1.25;
+}
+
+.playlist-chip:hover {
+  border-color: rgba(232, 146, 58, 0.45);
+  color: var(--cream);
+}
+
+.playlist-chip.active {
+  border-color: var(--amber);
+  background: rgba(196, 92, 38, 0.35);
+  color: var(--cream);
+}
+
+/* Bottom dock — quote stacked above player */
+.bottom-dock {
+  position: fixed;
+  bottom: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  width: calc(100% - 1.5rem);
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+/* Lucknow quote — painted sign strip */
+.lucknow-quote {
+  font-family: var(--font-display);
+  font-size: clamp(0.72rem, 2.5vw, 0.88rem);
+  font-style: italic;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  pointer-events: none;
+  text-align: center;
+  padding: 0.35rem 0.85rem;
+  border-top: 1px solid rgba(212, 168, 83, 0.35);
+  border-bottom: 1px solid rgba(212, 168, 83, 0.35);
+  background: linear-gradient(90deg, transparent, rgba(80, 32, 12, 0.85) 12%, rgba(80, 32, 12, 0.85) 88%, transparent);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Footer */
+.footer {
+  position: fixed;
+  bottom: 0.4rem;
+  right: 0.75rem;
+  z-index: 2;
+  font-size: 0.62rem;
+  color: rgba(250, 243, 232, 0.35);
+  pointer-events: none;
+}
+
+/* File protocol warning */
+.file-warning {
+  position: fixed;
+  top: 2.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 4;
+  font-size: 0.68rem;
+  color: var(--cream-dim);
+  text-align: center;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  background: rgba(26, 20, 16, 0.8);
+  border: 1px solid rgba(232, 146, 58, 0.25);
+  max-width: 90vw;
+}
+
+.yt-embed {
+  position: fixed;
+  left: -9999px;
+  top: 0;
+  width: 200px;
+  height: 200px;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Player dock */
+.player-card {
+  width: 100%;
+  background: rgba(26, 20, 16, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(232, 146, 58, 0.22);
+  border-radius: 12px;
+  padding: 0.5rem 0.65rem;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.35rem 0.5rem;
+  align-items: center;
+}
+
+.player-card.playing {
+  border-color: rgba(232, 146, 58, 0.4);
+}
+
+.player-card__label {
+  font-size: 0.55rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--gold);
+  line-height: 1.2;
+}
+
+.player-card__source {
+  color: var(--cream-dim);
+  font-size: 0.5rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.local-audio {
+  position: fixed;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.player-card__title {
+  font-size: 0.76rem;
+  font-weight: 600;
+  line-height: 1.25;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-card__artist {
+  font-size: 0.62rem;
+  color: var(--cream-dim);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-card__controls {
+  grid-column: 3;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.ctrl-btn {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1px solid rgba(232, 146, 58, 0.3);
+  background: rgba(232, 146, 58, 0.1);
+  color: var(--cream);
+  font-size: 0.6rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.ctrl-btn:hover { background: rgba(232, 146, 58, 0.25); }
+.ctrl-btn:active { transform: scale(0.94); }
+
+.ctrl-btn--play {
+  width: 30px;
+  height: 30px;
+  background: var(--amber-deep);
+  border-color: var(--amber);
+  font-size: 0.68rem;
+}
+
+.ctrl-btn--play:hover { background: var(--amber); }
+
+.player-card__progress {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.player-card__time {
+  font-size: 0.58rem;
+  color: var(--cream-dim);
+  min-width: 1.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-bar {
+  flex: 1;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar__fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--amber-deep), var(--gold));
+  border-radius: 2px;
+  transition: width 0.4s linear;
+}
+
+@media (max-width: 480px) {
+  .backdrop__img {
+    object-position: center 38%;
+  }
+
+  .rotations-panel {
+    top: auto;
+    bottom: 7.5rem;
+    right: 0.5rem;
+    max-width: 8.5rem;
+  }
+
+  .lucknow-quote {
+    font-size: 0.68rem;
+    padding: 0.3rem 0.65rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .backdrop__img {
+    object-position: center 45%;
+  }
+
+  .rotations-panel {
+    top: 3.25rem;
+    right: 1.25rem;
+    max-width: 11rem;
+  }
+}

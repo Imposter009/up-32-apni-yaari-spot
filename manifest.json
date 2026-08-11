@@ -1,0 +1,17 @@
+{
+  "name": "UP 32",
+  "short_name": "UP 32",
+  "description": "Always-on radio from Apni Yaari Spot, a Lucknow street-corner chai stall",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1a1410",
+  "theme_color": "#c45c26",
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
