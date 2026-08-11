@@ -12,6 +12,9 @@
   let ytPlayer = null;
   let ytApiReady = false;
   let pendingYt = null;
+  let playerSheetOpen = false;
+
+  const MOBILE_MQ = window.matchMedia("(max-width: 768px)");
 
   const $ = (sel) => document.querySelector(sel);
 
@@ -29,6 +32,12 @@
     duration: $("#duration"),
     progressFill: $("#progress-fill"),
     playerCard: $(".player-card"),
+    bottomDock: $("#bottom-dock"),
+    playerDisc: $("#player-disc"),
+    playerDiscIcon: $(".player-disc__icon"),
+    playerBackdrop: $("#player-backdrop"),
+    playerClose: $("#player-close"),
+    fullscreenBtn: $("#fullscreen-btn"),
     playlistGrid: $("#playlist-grid"),
     rotationsSign: $("#rotations-sign"),
     rotationsPanel: $("#playlists"),
@@ -125,10 +134,41 @@
     }
   }
 
+  function isMobileLayout() {
+    return MOBILE_MQ.matches;
+  }
+
   function setPlayingUI(playing) {
     isPlaying = playing;
     els.playBtn.textContent = playing ? "⏸" : "▶";
     els.playerCard.classList.toggle("playing", playing);
+    if (els.playerDisc) {
+      els.playerDisc.classList.toggle("player-disc--spinning", playing);
+      if (els.playerDiscIcon) els.playerDiscIcon.textContent = playing ? "⏸" : "▶";
+    }
+  }
+
+  function openPlayerSheet() {
+    if (!isMobileLayout()) return;
+    playerSheetOpen = true;
+    els.bottomDock?.classList.add("bottom-dock--open");
+    els.playerDisc?.setAttribute("aria-expanded", "true");
+    if (els.playerBackdrop) els.playerBackdrop.hidden = false;
+    document.body.classList.add("player-sheet-open");
+  }
+
+  function closePlayerSheet() {
+    if (!isMobileLayout()) return;
+    playerSheetOpen = false;
+    els.bottomDock?.classList.remove("bottom-dock--open");
+    els.playerDisc?.setAttribute("aria-expanded", "false");
+    if (els.playerBackdrop) els.playerBackdrop.hidden = true;
+    document.body.classList.remove("player-sheet-open");
+  }
+
+  function togglePlayerSheet() {
+    if (playerSheetOpen) closePlayerSheet();
+    else openPlayerSheet();
   }
 
   function stopPlayers() {
@@ -309,6 +349,7 @@
   async function togglePlay() {
     if (!started) {
       await startPlayback();
+      if (isMobileLayout()) openPlayerSheet();
       return;
     }
 
@@ -363,6 +404,60 @@
     }
   };
 
+  function initFullscreen() {
+    if (!els.fullscreenBtn) return;
+
+    function isFs() {
+      return !!(document.fullscreenElement || document.webkitFullscreenElement);
+    }
+
+    function syncFullscreenUI() {
+      const active = isFs();
+      document.body.classList.toggle("is-fullscreen", active);
+      els.fullscreenBtn.textContent = active ? "⤓" : "⛶";
+      els.fullscreenBtn.setAttribute("aria-label", active ? "Exit fullscreen" : "Enter fullscreen");
+      els.fullscreenBtn.title = active ? "Exit fullscreen" : "Fullscreen";
+    }
+
+    els.fullscreenBtn.addEventListener("click", async () => {
+      try {
+        if (!isFs()) {
+          const el = document.documentElement;
+          if (el.requestFullscreen) await el.requestFullscreen();
+          else if (el.webkitRequestFullscreen) await el.webkitRequestFullscreen();
+        } else if (document.exitFullscreen) await document.exitFullscreen();
+        else if (document.webkitExitFullscreen) await document.webkitExitFullscreen();
+      } catch (err) {
+        console.warn("Fullscreen not available:", err);
+      }
+    });
+
+    document.addEventListener("fullscreenchange", syncFullscreenUI);
+    document.addEventListener("webkitfullscreenchange", syncFullscreenUI);
+    syncFullscreenUI();
+  }
+
+  function initMobilePlayer() {
+    els.playerDisc?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      togglePlayerSheet();
+    });
+
+    els.playerClose?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closePlayerSheet();
+    });
+
+    els.playerBackdrop?.addEventListener("click", closePlayerSheet);
+
+    MOBILE_MQ.addEventListener("change", () => {
+      if (!isMobileLayout()) closePlayerSheet();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && playerSheetOpen) closePlayerSheet();
+    });
+  }
   function initAmbientToggle() {
     els.ambientToggle.addEventListener("click", async (e) => {
       e.stopPropagation();
@@ -431,5 +526,7 @@
   updateNowPlayingUI();
   initLocalAudio();
   initAmbientToggle();
+  initFullscreen();
+  initMobilePlayer();
   initPWA();
 })();

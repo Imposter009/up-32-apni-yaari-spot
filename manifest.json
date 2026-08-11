@@ -4,7 +4,7 @@
   "description": "Always-on radio from Apni Yaari Spot, a Lucknow street-corner chai stall",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#1a1410",
+  "background_color": "#0f1828",
   "theme_color": "#c45c26",
   "icons": [
     {
