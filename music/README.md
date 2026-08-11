@@ -25,11 +25,16 @@ music/
 │   ├── tum-hi-ho.mp3
 │   └── tere-bina.mp3
 └── adda-classics/
-    ├── pal-pal-dil-ke-paas.mp3
-    ├── chaiyya-chaiyya.mp3
-    ├── chehra-kya-dekhte-ho.mp3
-    ├── lag-ja-gale.mp3
-    └── gulabi-aankhen.mp3
+    ├── jo-tu-na-mila.opus
+    ├── chitta.opus
+    ├── ek-dilruba-hai.opus
+    ├── ek-din-aap-yun-hum-se-mil-jaenge.opus
+    ├── kabhi-tumhe.opus
+    ├── kya-loge-tum.opus
+    ├── pardesi-pardesi.opus
+    ├── rabba-mehar-kari.opus
+    ├── saudebaazi.opus
+    └── tune-jo-na-kaha.opus
 ```
 
 Filenames must match exactly (see `js/playlists.js` for the `file` field on each song).
