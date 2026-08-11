@@ -16,6 +16,10 @@ $mime = @{
   ".jpg"  = "image/jpeg"
   ".svg"  = "image/svg+xml"
   ".ico"  = "image/x-icon"
+  ".mp3"  = "audio/mpeg"
+  ".opus" = "audio/opus"
+  ".ogg"  = "audio/ogg"
+  ".m4a"  = "audio/mp4"
 }
 
 while ($listener.IsListening) {
@@ -28,9 +32,12 @@ while ($listener.IsListening) {
     $ext = [IO.Path]::GetExtension($file).ToLower()
     $ctx.Response.ContentType = $mime[$ext]
     if (-not $ctx.Response.ContentType) { $ctx.Response.ContentType = "application/octet-stream" }
-    $bytes = [IO.File]::ReadAllBytes($file)
-    $ctx.Response.ContentLength64 = $bytes.Length
-    $ctx.Response.OutputStream.Write($bytes, 0, $bytes.Length)
+    $length = (Get-Item -LiteralPath $file).Length
+    $ctx.Response.ContentLength64 = $length
+    if ($ctx.Request.HttpMethod -ne "HEAD") {
+      $bytes = [IO.File]::ReadAllBytes($file)
+      $ctx.Response.OutputStream.Write($bytes, 0, $bytes.Length)
+    }
   } else {
     $ctx.Response.StatusCode = 404
     $msg = [Text.Encoding]::UTF8.GetBytes("Not found")

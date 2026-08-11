@@ -112,8 +112,185 @@
         f.frequency.value = 600;
       }, 0.12);
 
+      /* Light breeze / leaf rustle */
+      this.loopNoise(this.makeNoiseBuffer(0.94), (f) => {
+        f.type = "highpass";
+        f.frequency.value = 900;
+      }, 0.06);
+
+      /* Distant crowd murmur */
+      this.loopNoise(this.makeNoiseBuffer(0.988), (f) => {
+        f.type = "bandpass";
+        f.frequency.value = 420;
+        f.Q.value = 1.2;
+      }, 0.08);
+
       this.scheduleWhistle();
       this.scheduleHorn();
+      this.scheduleBirds();
+      this.scheduleBicycleBell();
+      this.scheduleCupClink();
+      this.scheduleRickshawCreak();
+      this.scheduleAutoHorn();
+      this.scheduleKettleBubble();
+    }
+
+    scheduleBirds() {
+      const chirp = () => {
+        if (!this.ready) return;
+        const t = this.ctx.currentTime;
+        const count = 2 + Math.floor(Math.random() * 3);
+        for (let i = 0; i < count; i++) {
+          const start = t + i * (0.08 + Math.random() * 0.12);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "sine";
+          const base = 2800 + Math.random() * 2200;
+          osc.frequency.setValueAtTime(base, start);
+          osc.frequency.exponentialRampToValueAtTime(base * (1.1 + Math.random() * 0.3), start + 0.04);
+          osc.frequency.exponentialRampToValueAtTime(base * 0.85, start + 0.1);
+          gain.gain.setValueAtTime(0, start);
+          gain.gain.linearRampToValueAtTime(0.035, start + 0.01);
+          gain.gain.linearRampToValueAtTime(0, start + 0.12);
+          osc.connect(gain);
+          gain.connect(this.master);
+          osc.start(start);
+          osc.stop(start + 0.14);
+        }
+        this.later(chirp, 7000 + Math.random() * 15000);
+      };
+      this.later(chirp, 3000);
+    }
+
+    scheduleBicycleBell() {
+      const ring = () => {
+        if (!this.ready) return;
+        const t = this.ctx.currentTime;
+        [1800, 2400, 1800].forEach((freq, i) => {
+          const start = t + i * 0.09;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0, start);
+          gain.gain.linearRampToValueAtTime(0.05, start + 0.01);
+          gain.gain.exponentialRampToValueAtTime(0.001, start + 0.35);
+          osc.connect(gain);
+          gain.connect(this.master);
+          osc.start(start);
+          osc.stop(start + 0.4);
+        });
+        this.later(ring, 12000 + Math.random() * 20000);
+      };
+      this.later(ring, 6000);
+    }
+
+    scheduleCupClink() {
+      const clink = () => {
+        if (!this.ready) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(3200, t);
+        osc.frequency.exponentialRampToValueAtTime(1800, t + 0.06);
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.055, t + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+        osc.connect(gain);
+        gain.connect(this.master);
+        osc.start(t);
+        osc.stop(t + 0.2);
+
+        const buf = this.ctx.createBuffer(1, Math.floor(this.ctx.sampleRate * 0.04), this.ctx.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1) * (1 - i / data.length);
+        const src = this.ctx.createBufferSource();
+        src.buffer = buf;
+        const nGain = this.ctx.createGain();
+        nGain.gain.value = 0.025;
+        src.connect(nGain);
+        nGain.connect(this.master);
+        src.start(t);
+
+        this.later(clink, 8000 + Math.random() * 18000);
+      };
+      this.later(clink, 5000);
+    }
+
+    scheduleRickshawCreak() {
+      const creak = () => {
+        if (!this.ready) return;
+        const t = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+        osc.type = "sawtooth";
+        osc.frequency.setValueAtTime(180, t);
+        osc.frequency.linearRampToValueAtTime(140, t + 1.8);
+        filter.type = "bandpass";
+        filter.frequency.value = 320;
+        filter.Q.value = 2.5;
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.028, t + 0.2);
+        gain.gain.linearRampToValueAtTime(0.018, t + 1.2);
+        gain.gain.linearRampToValueAtTime(0, t + 2.1);
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.master);
+        osc.start(t);
+        osc.stop(t + 2.2);
+        this.later(creak, 14000 + Math.random() * 22000);
+      };
+      this.later(creak, 9000);
+    }
+
+    scheduleAutoHorn() {
+      const twoTone = () => {
+        if (!this.ready) return;
+        const t = this.ctx.currentTime;
+        [380, 320].forEach((freq, i) => {
+          const start = t + i * 0.22;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "square";
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0, start);
+          gain.gain.linearRampToValueAtTime(0.04, start + 0.02);
+          gain.gain.linearRampToValueAtTime(0, start + 0.2);
+          osc.connect(gain);
+          gain.connect(this.master);
+          osc.start(start);
+          osc.stop(start + 0.22);
+        });
+        this.later(twoTone, 18000 + Math.random() * 25000);
+      };
+      this.later(twoTone, 11000);
+    }
+
+    scheduleKettleBubble() {
+      const bubble = () => {
+        if (!this.ready) return;
+        const t = this.ctx.currentTime;
+        const pops = 2 + Math.floor(Math.random() * 4);
+        for (let i = 0; i < pops; i++) {
+          const start = t + i * (0.15 + Math.random() * 0.25);
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(120 + Math.random() * 80, start);
+          osc.frequency.exponentialRampToValueAtTime(60, start + 0.08);
+          gain.gain.setValueAtTime(0, start);
+          gain.gain.linearRampToValueAtTime(0.04, start + 0.01);
+          gain.gain.linearRampToValueAtTime(0, start + 0.1);
+          osc.connect(gain);
+          gain.connect(this.master);
+          osc.start(start);
+          osc.stop(start + 0.12);
+        }
+        this.later(bubble, 5000 + Math.random() * 9000);
+      };
+      this.later(bubble, 2000);
     }
 
     scheduleWhistle() {

@@ -460,7 +460,6 @@ body {
   width: 0%;
   background: linear-gradient(90deg, var(--amber-deep), var(--gold));
   border-radius: 2px;
-  transition: width 0.4s linear;
 }
 
 @media (max-width: 480px) {
