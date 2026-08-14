@@ -3,6 +3,7 @@
 
   let currentPlaylistId = "chai-baatein";
   let currentIndex = 0;
+  let shuffledIndices = [];
   let isPlaying = false;
   let started = false;
   let ambienceOn = false;
@@ -13,6 +14,18 @@
   let ytApiReady = false;
   let pendingYt = null;
   let playerSheetOpen = false;
+
+  function initShuffle() {
+    const songs = getSongs();
+    shuffledIndices = Array.from({ length: songs.length }, (_, i) => i);
+    for (let i = shuffledIndices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const temp = shuffledIndices[i];
+      shuffledIndices[i] = shuffledIndices[j];
+      shuffledIndices[j] = temp;
+    }
+    currentIndex = 0;
+  }
 
   const MOBILE_MQ = window.matchMedia("(max-width: 768px)");
 
@@ -104,7 +117,8 @@
   }
 
   function getCurrentSong() {
-    return getSongs()[currentIndex];
+    const actualIndex = shuffledIndices[currentIndex] !== undefined ? shuffledIndices[currentIndex] : currentIndex;
+    return getSongs()[actualIndex];
   }
 
   function renderPlaylists() {
@@ -296,7 +310,7 @@
 
   function switchPlaylist(id) {
     currentPlaylistId = id;
-    currentIndex = 0;
+    initShuffle();
     renderPlaylists();
     if (started) loadSong(0, isPlaying);
     else updateNowPlayingUI();
@@ -522,6 +536,7 @@
   setInterval(updateLucknowTime, 30000);
   setInterval(updateListenerCount, 45000);
 
+  initShuffle();
   renderPlaylists();
   updateNowPlayingUI();
   initLocalAudio();
