@@ -279,6 +279,7 @@ body {
   flex-direction: column;
   align-items: center;
   gap: 0.45rem;
+  z-index: 3; /* Ensure it's below player-disc when closed */
 }
 
 /* Lucknow quote — painted sign strip */
@@ -424,7 +425,7 @@ body {
 /* Fullscreen */
 body.is-fullscreen .backdrop__img {
   object-fit: contain;
-  object-position: center center;
+  object-fit: cover;
 }
 
 body.is-fullscreen .backdrop {
@@ -442,8 +443,8 @@ body.is-fullscreen .backdrop__overlay {
   position: relative;
   width: 100%;
   background: rgba(26, 20, 16, 0.85);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: none; /* Removed blur as per user request */
+  -webkit-backdrop-filter: none; /* Removed blur as per user request */
   border: 1px solid rgba(232, 146, 58, 0.22);
   border-radius: 12px;
   padding: 0.5rem 0.65rem;
@@ -571,7 +572,7 @@ body.is-fullscreen .backdrop__overlay {
   }
 
   .backdrop__img {
-    object-fit: contain;
+    object-fit: cover;
     object-position: center center;
   }
 
@@ -634,6 +635,7 @@ body.is-fullscreen .backdrop__overlay {
     transform: translateY(0);
     opacity: 1;
     pointer-events: auto;
+    z-index: 6; /* Ensure it's above player-disc and backdrop when open */
   }
 
   .player-backdrop[hidden] {
@@ -675,21 +677,70 @@ body.is-fullscreen .backdrop__overlay {
   }
 
   .player-card {
-    padding: 0.65rem 0.75rem 0.55rem;
+    padding: 0.65rem 0.25rem 0.55rem; /* Reduced horizontal padding for better fit on mobile */
     border-radius: 14px 14px 12px 12px;
+    backdrop-filter: none; /* Ensure no blur on the card itself */
+    -webkit-backdrop-filter: none;
   }
 
   .player-card__title {
     font-size: 0.72rem;
-    padding-right: 1.5rem;
+    padding-right: 0.5rem; /* Reduced padding to give more space for controls */
   }
 }
 
-@media (max-width: 480px) {
+.chai-toast {
+  position: absolute;
+  bottom: 70px; /* Above the cup */
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(26, 20, 16, 0.9);
+  color: var(--cream);
+  padding: 0.5rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  z-index: 8;
+}
+
+.chai-toast.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Confetti */
+.confetti-container {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 9;
+}
+
+.confetti {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background-color: var(--amber); /* Default color */
+  opacity: 0;
+  animation: confetti-fall 2s ease-out forwards;
+}
+
+@keyframes confetti-fall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100px) rotate(720deg); opacity: 0; }
+}
+
+@media (max-width: 768px) {
   .player-disc {
     width: 52px;
     height: 52px;
   }
+
 }
 
 @media (min-width: 769px) {

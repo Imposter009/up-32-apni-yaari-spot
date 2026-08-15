@@ -58,15 +58,9 @@
     ambientToggle: $("#ambient-toggle"),
     iframe: $("#yt-embed"),
     localAudio: $("#local-audio"),
+    backdropImg: $(".backdrop__img"), // Added to reference the backdrop image
     fileWarning: $("#file-warning"),
   };
-
-  function formatTime(seconds) {
-    if (!seconds || isNaN(seconds)) return "0:00";
-    const m = Math.floor(seconds / 60);
-    const s = Math.floor(seconds % 60);
-    return `${m}:${s.toString().padStart(2, "0")}`;
-  }
 
   function ytPlayerVars(autoplay) {
     const vars = {
@@ -140,6 +134,7 @@
     const pl = PLAYLISTS[currentPlaylistId];
     els.title.textContent = song.title;
     els.artist.textContent = song.artist;
+    els.artist.textContent = ""; // Remove artist name as requested
     els.playlistLabel.textContent = pl.name;
     if (els.sourceBadge) {
       if (source === "local") els.sourceBadge.textContent = "Local";
@@ -178,6 +173,14 @@
     els.playerDisc?.setAttribute("aria-expanded", "false");
     if (els.playerBackdrop) els.playerBackdrop.hidden = true;
     document.body.classList.remove("player-sheet-open");
+  }
+
+  function updateBackdropImage() {
+    if (isMobileLayout()) {
+      els.backdropImg.src = "assets/chai-backdrop_new_mobile.png";
+    } else {
+      els.backdropImg.src = "assets/chai-backdrop_new.png";
+    }
   }
 
   function togglePlayerSheet() {
@@ -465,6 +468,7 @@
     els.playerBackdrop?.addEventListener("click", closePlayerSheet);
 
     MOBILE_MQ.addEventListener("change", () => {
+      updateBackdropImage(); // Update image on mobile layout change
       if (!isMobileLayout()) closePlayerSheet();
     });
 

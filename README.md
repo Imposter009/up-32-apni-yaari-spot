@@ -4,7 +4,7 @@ An ambient always-on radio for a Lucknow street-corner chai stall. Four friends,
 
 **Creator:** Sumit Gupta
 
-![Apni Yaari Spot](assets/chai-backdrop.jpg)
+![Apni Yaari Spot](assets/chai-backdrop_new.png)
 
 ## Features
 
